@@ -8,7 +8,7 @@ use Exporter 'import';
 use Carp;
 
 our @EXPORT_OK = qw(parse);
-our $VERSION   = '1.18';
+our $VERSION   = '1.19';
 
 =encoding utf8
 
@@ -18,29 +18,31 @@ CLI::Cmdline - Minimal command-line parser with short and long options in pure P
 
 =head1 VERSION
 
-1.18
+1.19
 
 =head1 SYNOPSIS
 
-    use CLI::Cmdline;
+    use CLI::Cmdline qw(parse);
 
-    my $switches = '-v -h -x -verbose -quiet';
-    my $options  = '-dir -file -header';
+    my $switches = '-v -q --help --dry-run';
+    my $options  = '--input --output --config --include';
 
-    my %PARAM = (
-        header  => [],  # array, so allowed mutiple entries
-        dir     => 'default.d',
-        x       => 5,
+    # only define options which have no default value 0 or '';
+    my %opt = (
+        include => [],         # multiple values allowed
+        config  => '/etc/myapp.conf',
     );
 
-    CLI::Cmdline::parse(\%PARAM, $switches, $options)
-        or die "Invalid option or missing argument: @ARGV\n";
+    CLI::Cmdline::parse(\%opt, $switches, $options)
+        or die "Usage: $0 [options] <files...>\nTry '$0 --help' for more information.\n";
 
     # @ARGV now contains only positional arguments
+    die " .... "   if $#ARGV < 0 || $ARGV[0] ne 'file.txt';
 
 =head1 DESCRIPTION
 
-Tiny, zero-dependency cmdline parser supporting:
+Tiny, zero-dependency command-line parser supporting short/long options,
+bundling, repeated switches, array collection, and C<--> termination.
 
 =over 4
 
@@ -64,9 +66,109 @@ Tiny, zero-dependency cmdline parser supporting:
 
 =back
 
-Use with:
+=head1 EXAMPLES
 
-    parse(...) or die "Bad options";
+=head2 Minimal example – switches without explicit defaults
+
+You do not need to pre-define every switch with a default value.
+Missing switches are automatically initialized to C<0>.
+
+    my %opt;
+    parse(\%opt, '-v -h -x')
+        or die "usage: $0 [-v] [-h] [-x] files...\n";
+
+    # After parsing ./script.pl -vvvx file.txt
+    # %opt will contain: (v => 3, h => 0, x => 1)
+    # @ARGV == ('file.txt')
+
+=head2 Required Options
+
+To make an option required, declare it with an empty string default and check afterward:
+
+    my %opt = ( mode => 'normal');
+    parse(\%opt, '', '--input --output --mode')
+        or die "usage: $0 --input=FILE [--output=FILE] [--mode=TYPE] files...\n";
+
+    die "Error: --input is required\n"   if ($opt{input} eq '');
+
+=head2 Collecting multiple values, no default array needed
+
+If you want multiple occurrences but don't want to pre-set an array:
+
+    my %opt = (
+        define => [],        # explicitly an array ref
+    );
+
+    parse(\%opt, '', '--define')
+        or die "usage: $0 [--define NAME=VAL ...] files...\n";
+
+    # ./script.pl --define DEBUG=1 --define TEST --define PROFILE
+    # $opt{define} == ['DEBUG=1', 'TEST', 'PROFILE']
+
+    # Alternative: omit the default entirely (parser will not auto-create array)
+    # If you forget the [] default, repeated --define will overwrite the last value.
+
+=head2 Realistic full script with clear usage message
+
+    #!/usr/bin/perl
+    use strict;
+    use warnings;
+    use CLI::Cmdline qw(parse);
+
+    my $switches = '-v -q --help --dry-run -f';
+    my $options  = '--input --output --mode --tag';
+
+    my %opt = (
+        mode    => 'normal',
+        tag     => [],            # multiple tags allowed
+    );
+
+    parse(\%opt, $switches, $options)
+        or die <<'USAGE';
+Usage: process.pl [options] --input=FILE [files...]
+
+Options:
+  -v                        Increase verbosity (repeatable)
+  -q                        Suppress normal output
+  --dry-run                 Show what would be done
+  -f                        Force operation even if risky
+  --input=FILE              Input file (required)
+  --output=FILE             Output file (optional)
+  --mode=MODE               Processing mode (normal|fast|safe)
+  --tag=TAG                 Add a tag (multiple allowed)
+  --help                    Show this help message
+
+Example:
+  process.pl --input=data.csv --output=result.json --tag=2026 --tag=final -vv
+USAGE
+
+    if ($opt{h}) {
+        print <<'HELP';
+Full documentation goes here...
+HELP
+        exit 0;
+    }
+
+    if (!defined $opt{input}) {
+        die "Error: --input is required. See --help for usage.\n";
+    }
+
+    my $verbosity = $opt{v} - $opt{q};
+    print "Starting processing (verbosity $verbosity)...\n" if $verbosity > 0;
+
+
+=head2 Using -- to pass filenames starting with dash
+
+    my %opt;
+    parse(\%opt, '-r')
+        or die "usage: $0 [-r] files...\n";
+
+    # Command line:
+    ./script.pl -r -- -hidden-file.txt another-file
+
+    # Results:
+    # $opt{r} == 1
+    # @ARGV == ('-hidden-file.txt', 'another-file')
 
 =head1 AUTHOR
 
