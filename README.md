@@ -2,7 +2,7 @@
 A minimal, zero-dependency command-line parser in pure Perl – supporting both short and long options.
 
 [![Perl](https://img.shields.io/badge/perl-5.010%2B-brightgreen)](https://www.perl.org/)
-[![CPAN version](https://img.shields.io/badge/CPAN-1.19-blue)](https://metacpan.org/pod/CLI::Cmdline/)
+[![CPAN version](https://img.shields.io/badge/CPAN-1.20-blue)](https://metacpan.org/pod/CLI::Cmdline/)
 [![License](https://img.shields.io/badge/license-Perl-orange)](https://dev.perl.org/licenses/)
  
 ## Features
@@ -14,6 +14,7 @@ A minimal, zero-dependency command-line parser in pure Perl – supporting both 
   - Attached: `--output=file.txt`
 - Single-letter short switches can be bundled: `-vh`, `-vvv`
 - Single-letter short options can be last in a bundle: `-vd dir`
+- aliases can be used, f.e. '-v|verbose -n|dry-run'
 - Switches are counted when repeated (`-v -v` → 2, `--verbose --verbose` → 2)
 - Options requiring arguments support repeated values:
   - Collect all values if default is an array reference `[]`
@@ -38,20 +39,20 @@ All this in ~120 lines of pure Perl. No dependencies.
     use warnings;
     use CLI::Cmdline qw(parse);
 
-    my $switches = '-v -h --verbose --quiet --help';
-    my $options  = '-f --file --output --header';
+    my $switches = '-v|verbose -x -h|help --quiet';
+    my $options  = '-f|file --output --header';
 
     my %opt = (
         header  => [],          # collect multiple values
         output  => 'default.out',
-        h => 5,
+        x => 5,
     );
 
     CLI::Cmdline::parse(\%opt, $switches, $options)
         or die "Invalid option or missing argument: @ARGV\n";
 
     # @ARGV now contains only positional arguments
-    print "Verbose level: $opt{verbose}\n";
+    print "Verbose level: $opt{v}\n";
     print "Output file: $opt{output}\n";
     print "Headers: @{$opt{header}}\n" if @{ $opt{header} };
 
@@ -80,11 +81,11 @@ All this in ~120 lines of pure Perl. No dependencies.
     Missing switches are automatically initialized to 0.
 
         my %opt;
-        parse(\%opt, '-v -h -x')
+        parse(\%opt, '-v|verbose -h -x')
            or die "usage: $0 [-v] [-h] [-x] files...\n";
 
-        # After parsing ./script.pl -vvvx file.txt
-        # %opt will contain: (v => 3, h => 0, x => 1)
+        # After parsing ./script.pl -verbose -vvvx file.txt
+        # %opt will contain: (v => 4, h => 0, x => 1)
         # @ARGV == ('file.txt')
 
 - **Required Options**
