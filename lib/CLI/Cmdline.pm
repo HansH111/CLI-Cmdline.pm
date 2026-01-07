@@ -5,27 +5,26 @@ use strict;
 use warnings;
 use 5.010;
 use Exporter 'import';
-use Carp;
 
 our @EXPORT_OK = qw(parse);
-our $VERSION   = '1.19';
+our $VERSION   = '1.20';  # optional prefixes in spec strings
 
 =encoding utf8
 
 =head1 NAME
 
-CLI::Cmdline - Minimal command-line parser with short and long options in pure Perl
+CLI::Cmdline - Minimal command-line parser with short/long options and aliases in pure Perl
 
 =head1 VERSION
 
-1.19
+1.20
 
 =head1 SYNOPSIS
 
     use CLI::Cmdline qw(parse);
 
-    my $switches = '-v -q --help --dry-run';
-    my $options  = '--input --output --config --include';
+    my $switches = '-v -q -h|help --dry-run';
+    my $options  = 'input --output --config --include';
 
     # only define options which have no default value 0 or '';
     my %opt = (
@@ -41,7 +40,7 @@ CLI::Cmdline - Minimal command-line parser with short and long options in pure P
 
 =head1 DESCRIPTION
 
-Tiny, zero-dependency command-line parser supporting short/long options,
+Tiny, zero-dependency command-line parser supporting short/long options, aliases,
 bundling, repeated switches, array collection, and C<--> termination.
 
 =over 4
@@ -51,6 +50,10 @@ bundling, repeated switches, array collection, and C<--> termination.
 =item * Long options: C<--verbose>, C<--help>
 
 =item * Long options with argument: C<--output file.txt> or C<--output=file.txt>
+
+=item * Aliases via C<|>
+
+=item * B<Optional> leading C<-> or C<--> in specification strings
 
 =item * Single-letter bundling: C<-vh>, C<-vvv>, C<-vd dir>
 
@@ -125,23 +128,22 @@ If you want multiple occurrences but don't want to pre-set an array:
 
     parse(\%opt, $switches, $options)
         or die <<'USAGE';
-Usage: process.pl [options] --input=FILE [files...]
+    Usage: process.pl [options] --input=FILE [files...]
 
-Options:
-  -v                        Increase verbosity (repeatable)
-  -q                        Suppress normal output
-  --dry-run                 Show what would be done
-  -f                        Force operation even if risky
-  --input=FILE              Input file (required)
-  --output=FILE             Output file (optional)
-  --mode=MODE               Processing mode (normal|fast|safe)
-  --tag=TAG                 Add a tag (multiple allowed)
-  --help                    Show this help message
+    Options:
+      -v                        Increase verbosity (repeatable)
+      -q                        Suppress normal output
+      --dry-run                 Show what would be done
+      -f                        Force operation even if risky
+      --input=FILE              Input file (required)
+      --output=FILE             Output file (optional)
+      --mode=MODE               Processing mode (normal|fast|safe)
+      --tag=TAG                 Add a tag (multiple allowed)
+      --help                    Show this help message
 
-Example:
-  process.pl --input=data.csv --output=result.json --tag=2026 --tag=final -vv
+    Example:
+      process.pl --input=data.csv --output=result.json --tag=2026 --tag=final -vv
 USAGE
-
     if ($opt{h}) {
         print <<'HELP';
 Full documentation goes here...
@@ -171,30 +173,27 @@ HELP
     # @ARGV == ('-hidden-file.txt', 'another-file')
 
 =head1 AUTHOR
-
+        
 Hans Harder <hans@atbas.org>
-
+        
 =head1 LICENSE
-
+            
 This module is free software.
-
+            
 You can redistribute it and/or modify it under the same terms as Perl itself.
 
 See the official Perl licensing terms: https://dev.perl.org/licenses/
-
+        
 =cut
 
 sub parse {
     my ($ph, $sw, $opt) = @_;
 
-    my %sw_lookup  = map { s/^--?//r => 1 } split /\s+/, $sw  // '';
-    my %opt_lookup = map { s/^--?//r => 1 } split /\s+/, $opt // '';
+    my ($psw_lookup,  $psw_alias,  $pasw_missing)  = _process_spec($ph,  $sw // '');
+    my ($popt_lookup, $popt_alias, $paopt_missing) = _process_spec($ph, $opt // '');
 
-    my @sw_missing  = grep { !exists $ph->{$_} } keys %sw_lookup;
-    my @opt_missing = grep { !exists $ph->{$_} } keys %opt_lookup;
-
-    @{$ph}{@sw_missing}  = (0)  x @sw_missing;
-    @{$ph}{@opt_missing} = ('') x @opt_missing;
+    @{$ph}{@$pasw_missing}  = (0)  x @$pasw_missing;
+    @{$ph}{@$paopt_missing} = ('') x @$paopt_missing;
 
     while (@ARGV) {
         my $arg = $ARGV[0];
@@ -204,71 +203,89 @@ sub parse {
             last;
         }
 
-        # Stop at non-options or lone '-'
         last if $arg eq '-' || substr($arg, 0, 1) ne '-';
         shift @ARGV;
 
-        # Handle --key=value form for long options
-        my $name = $arg;
-        my $attached_val = undef;
+        my ($name, $attached_val);
         if ($arg =~ /^--([^=]+)=(.*)$/) {
             $name = $1;
             $attached_val = $2;
         } else {
-            $name =~ s/^--?//;
+            $name = $arg =~ s/^--?//r;
+        }
+        # check aliases
+        $name = $psw_alias->{$name} // $popt_alias->{$name} // $name;
+
+        my $rc = _check_match($ph, $psw_lookup, $popt_lookup, $name, 1, $attached_val);
+        if ($rc == 1) {
+            next;
+        } elsif ($rc == -1) {
+            unshift @ARGV, $arg;
+            return 0;
         }
 
-        # Full match (multi-char or single after prefix strip)
-        if (length($name) > 0) {
-            my $rc = _check_match($ph, \%sw_lookup, \%opt_lookup, $name, 1, $attached_val);
-            if ($rc == 1) {
-                next;
-            } elsif ($rc == -1) {
-                unshift @ARGV, $arg;
-                return 0;
-            }
-            # rc == 0 : not full match = try bundling (only if short form)
-        }
-
-        # Only try bundling if it looks like short bundle
-        if ($arg =~ /^-[^-][^=]*$/) {  # -abc, no =
+        if ($arg =~ /^-[^-][^=]*$/) {
             my @chars = split //, substr($arg, 1);
 
             for my $i (0 .. $#chars) {
-                my $nm   = $chars[$i];
-                my $last = ($i == $#chars) ? 1 : 0;
+                my $char = $chars[$i];
+                my $is_last = ($i == $#chars);
 
-                my $rc = _check_match($ph, \%sw_lookup, \%opt_lookup, $nm, $last);
+                $char = $psw_alias->{$char} // $popt_alias->{$char} // $char;
+
+                my $rc = _check_match($ph, $psw_lookup, $popt_lookup, $char, $is_last);
                 if ($rc == 1) {
-                    last if exists $opt_lookup{$nm};
-                } elsif ($rc == -1 || $rc == 0) {
+                    last if exists $popt_lookup->{$char};
+                } elsif ($rc <= 0) {
                     unshift @ARGV, $arg;
                     return 0;
                 }
             }
-        } else {
-            # Was not a valid full match and not bundleable → restore
-            unshift @ARGV, $arg;
-            return 0;
+            next;
         }
+
+        unshift @ARGV, $arg;
+        return 0;
     }
 
     return 1;
 }
 
-# internal sub, Returns: 1 = matched and processed, 0 = not found, -1 = error
+sub _process_spec {
+    my ($ph, $spec_str) = @_;
+    my (%lookup, %alias, @missing);
+        
+    #    return (\%lookup, \%alias, \@missing)  unless $spec_str;
+
+    for my $spec (split /\s+/, $spec_str // '') {
+        next unless length $spec;	    
+        
+        my @names = split /\|/, $spec;
+        # Strip optional leading - or -- from ALL names, but remember the first one
+        my $canon = $names[0] =~ s/^--?//r;   # remove prefix from first name → canonical
+        $lookup{$canon} = 1;
+         
+        for my $n (@names) {
+            my $key = $n =~ s/^--?//r;         # remove prefix from each name
+            $alias{$key} = $canon if $key ne $canon;
+        }
+        push @missing, $canon if (!$ph) || !exists $ph->{$canon};
+    }
+    return (\%lookup, \%alias, \@missing);
+}
+            
 sub _check_match {
     my ($ph, $sw_ref, $opt_ref, $name, $is_last, $attached_val) = @_;
 
-    if (exists $sw_ref->{$name} && not $attached_val) {
-        $ph->{$name} = exists $ph->{$name} ? $ph->{$name} + 1 : 1;
+    if (exists $sw_ref->{$name} && !defined $attached_val) {
+        $ph->{$name} = ($ph->{$name} // 0) + 1;
         return 1;
     }
     elsif (exists $opt_ref->{$name}) {
         return -1 if !$is_last && !defined $attached_val;
 
         my $val = defined $attached_val ? $attached_val : shift @ARGV;
-        return -1 unless defined $val || defined $attached_val;
+        return -1 unless defined $val;
 
         if (ref $ph->{$name} eq 'ARRAY') {
             push @{$ph->{$name}}, $val;
