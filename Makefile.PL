@@ -32,7 +32,7 @@ WriteMakefile(
     },
 
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz' },
-    clean => { FILES => 'Cmdline-*' },
+    clean => { FILES => 'CLI-Cmdline-*' },
 
     test => { TESTS => 't/*.t' },
 );
