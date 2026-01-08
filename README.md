@@ -2,7 +2,7 @@
 A minimal, zero-dependency command-line parser in pure Perl – supporting both short and long options.
 
 [![Perl](https://img.shields.io/badge/perl-5.010%2B-brightgreen)](https://www.perl.org/)
-[![CPAN version](https://img.shields.io/badge/CPAN-1.21-blue)](https://metacpan.org/pod/CLI::Cmdline/)
+[![CPAN version](https://img.shields.io/badge/CPAN-1.22-blue)](https://metacpan.org/pod/CLI::Cmdline/)
 [![License](https://img.shields.io/badge/license-Perl-orange)](https://dev.perl.org/licenses/)
  
 ## Features
@@ -14,12 +14,12 @@ A minimal, zero-dependency command-line parser in pure Perl – supporting both 
   - Attached: `--output=file.txt`
 - Single-letter short switches can be bundled: `-vh`, `-vvv`
 - Single-letter short options can be last in a bundle: `-vd dir`
-- aliases can be used, f.e. '-v|verbose -n|dry-run'
+- Aliases can be used, f.e. '-v|verbose -n|dry-run'
 - Switches are counted when repeated (`-v -v` → 2, `--verbose --verbose` → 2)
 - Options requiring arguments support repeated values:
   - Collect all values if default is an array reference `[]`
   - Otherwise keep only the last value
-- `--` explicitly ends option processing
+- Explicitly ends option processing with `--`
 - Full `@ARGV` restoration on any error (unknown flag, missing argument, invalid bundle)
 - Returns 1 on success, 0 on error – perfect for `or die`
 
@@ -74,6 +74,8 @@ All this in ~120 lines of pure Perl. No dependencies.
     # → header => ['title.txt'], everything after -- left in @ARGV
 
 ## Perl examples
+
+   There are example scripts in the examples directory
 
 - **Minimal example – switches without explicit defaults**
 
