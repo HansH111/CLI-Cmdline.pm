@@ -28,6 +28,7 @@ WriteMakefile(
                 url  => 'https://github.com/HansH111/CLI-Cmdline.pm.git',
                 web  => 'https://github.com/HansH111/CLI-Cmdline.pm',
             },
+            bugtracker => { web => 'https://github.com/HansH111/CLI-Cmdline.pm/issues' },
         },
         provides => {
             'CLI::Cmdline' => {
