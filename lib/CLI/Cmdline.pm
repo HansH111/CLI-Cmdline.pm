@@ -26,9 +26,9 @@ CLI::Cmdline - Minimal command-line parser with short/long options and aliases i
     my $switches = '-v -q -h|help --dry-run';
     my $options  = 'input --output --config --include';
 
-    # only define options which have no default value 0 or '';
+	# only define options which have no default value 0 or '';
     my %opt = (
-	v       => 1,          # switch, will be incremented on each occurrence
+        v       => 1,          # switch, will be incremented on each occurrence
         include => [],         # multiple values allowed
         config  => '/etc/myapp.conf',
     );
