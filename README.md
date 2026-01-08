@@ -2,7 +2,7 @@
 A minimal, zero-dependency command-line parser in pure Perl – supporting both short and long options.
 
 [![Perl](https://img.shields.io/badge/perl-5.010%2B-brightgreen)](https://www.perl.org/)
-[![CPAN version](https://img.shields.io/badge/CPAN-1.20-blue)](https://metacpan.org/pod/CLI::Cmdline/)
+[![CPAN version](https://img.shields.io/badge/CPAN-1.21-blue)](https://metacpan.org/pod/CLI::Cmdline/)
 [![License](https://img.shields.io/badge/license-Perl-orange)](https://dev.perl.org/licenses/)
  
 ## Features
@@ -141,11 +141,15 @@ Returns 1 on success, 0 on error.
 
 The distribution includes a comprehensive test suite:
 
-    t/01-basic.t  # tests covering all features and edge cases
+    t/01-basic.t        # 162 tests covering basic features
+    t/02-alias.t        #  27 tests covering aliases
+    t/03-complex.t      #  28 tests covering edge cases
+    t/04-error.t        #  27 tests covering errors
+    t/05-integration.t  #  24 tests covering script cases
 
 Run with:
 
-    prove -v t/01-basic.t
+    prove -v t/*.t
 
 ## License
 
