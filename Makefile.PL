@@ -26,7 +26,7 @@ WriteMakefile(
         provides => {
             'CLI::Cmdline' => {
                 file    => 'lib/CLI/Cmdline.pm',
-                version => '1.20',
+                version => '1.21',
             },
         },
     },
