@@ -1,6 +1,6 @@
 Revision history for Perl module CLI::Cmdline
 
-1,23  2026-01-12
+1.23  2026-01-12
     - Added LICENSE file
     - Named alls files in MANIFEST
     - No changes to the code
