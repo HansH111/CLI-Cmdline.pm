@@ -7,7 +7,7 @@ use 5.010;
 use Exporter 'import';
 
 our @EXPORT_OK = qw(parse);
-our $VERSION   = '1.22';
+our $VERSION   = '1.23';
 
 =encoding utf8
 
@@ -17,7 +17,7 @@ CLI::Cmdline - Minimal command-line parser with short/long options and aliases i
 
 =head1 VERSION
 
-1.22
+1.23
 
 =head1 SYNOPSIS
 
