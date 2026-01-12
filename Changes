@@ -1,5 +1,9 @@
 Revision history for Perl module CLI::Cmdline
 
+1,23  2026-01-12
+    - Added LICENSE file
+    - Named alls files in MANIFEST
+
 1.22  2026-01-08
     - Added this file Changes
     - Added xt/release/kwalitee.t
