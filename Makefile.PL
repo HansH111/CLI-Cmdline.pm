@@ -11,7 +11,9 @@ WriteMakefile(
     MIN_PERL_VERSION => '5.010',
 
     PREREQ_PM => {
-        # No external dependencies — pure core Perl
+		'strict'                 => '0',
+		'warnings'               => '0',
+		'Exporter'               => '0',
     },
     BUILD_REQUIRES => {  # for building
         'ExtUtils::MakeMaker' => '6.52',
@@ -33,6 +35,7 @@ WriteMakefile(
         provides => {
             'CLI::Cmdline' => {
                 file    => 'lib/CLI/Cmdline.pm',
+                version => '1.23',
             },
         },
     },
