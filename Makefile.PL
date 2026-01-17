@@ -11,15 +11,14 @@ WriteMakefile(
     MIN_PERL_VERSION => '5.010',
 
     PREREQ_PM => {
-		'strict'                 => '0',
-		'warnings'               => '0',
-		'Exporter'               => '0',
     },
     BUILD_REQUIRES => {  # for building
         'ExtUtils::MakeMaker' => '6.52',
     },
     TEST_REQUIRES => {   # for testing
         'Test::More' => '0.88',
+        'Test::NoWarnings' => '1.04',
+        'Test::Pod::Coverage' => '1.04',
     },
 
     META_MERGE       => {
@@ -35,9 +34,11 @@ WriteMakefile(
         provides => {
             'CLI::Cmdline' => {
                 file    => 'lib/CLI/Cmdline.pm',
-                version => '1.23',
             },
         },
+        x_contributors => [
+            'Hans Harder <hans@atbas.org>',
+        ],
     },
 
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz' },
