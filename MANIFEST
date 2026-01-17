@@ -1,8 +1,9 @@
+AGENTS.md
 Changes
 examples/script_extended.pl
 examples/script_simple.pl
-LICENSE
 lib/CLI/Cmdline.pm
+LICENSE
 Makefile.PL
 MANIFEST
 README.md
@@ -13,3 +14,4 @@ t/03-complex.t
 t/04-error.t
 t/05-integration.t
 xt/release/kwalitee.t
+xt/release/pod-coverage.t
