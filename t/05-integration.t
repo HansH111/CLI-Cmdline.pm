@@ -19,7 +19,8 @@ sub run_script {
 
     # Write script with shebang
     open my $fh, '>', $filename or die "Cannot write $filename: $!";
-    print $fh "#!/usr/bin/perl\n";   # <-- important shebang
+    # Write script with shebang pointing to the perl that runs the tests
+    print $fh "#!$^X\n";
     print $fh $code;
     close $fh;
 
