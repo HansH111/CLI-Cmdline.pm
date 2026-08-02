@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 package CLI::Cmdline;
 
 use strict;
@@ -8,7 +8,7 @@ use Exporter 'import';
 
 our @EXPORT_OK = qw(parse);
 our @EXPORT = qw(parse);
-our $VERSION   = '1.24';
+our $VERSION   = '1.26';
 
 use constant {
     MATCH_SWITCH => 1,
@@ -140,7 +140,7 @@ CLI::Cmdline - Minimal command-line parser with short/long options and aliases i
 
 =head1 VERSION
 
-1.24
+1.26
 
 =head1 SYNOPSIS
 
@@ -377,9 +377,12 @@ Hans Harder <hans@atbas.org>
 
 =head1 LICENSE
 
-This module is free software.
+LICENSE AND COPYRIGHT
 
-You can redistribute it and/or modify it under the same terms as Perl itself.
+This software is Copyright (c) 2026 by Hans Harder.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 See the official Perl licensing terms: https://dev.perl.org/licenses/
 
