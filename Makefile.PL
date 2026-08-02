@@ -8,7 +8,7 @@ WriteMakefile(
     VERSION_FROM     => 'lib/CLI/Cmdline.pm',
     ABSTRACT         => 'A minimal command-line parser with short and long options in pure Perl',
     LICENSE          => 'perl',
-    MIN_PERL_VERSION => '5.010',
+    MIN_PERL_VERSION => '5.014',
 
     PREREQ_PM => {
     },
@@ -26,15 +26,15 @@ WriteMakefile(
         resources => {
             repository => {
                 type => 'git',
-                url  => 'https://github.com/HansH111/CLI-Cmdline.pm.git',
-                web  => 'https://github.com/HansH111/CLI-Cmdline.pm',
+                url  => 'https://codeberg.org/HansH111/CLI-Cmdline.pm.git',
+                web  => 'https://codeberg.org/HansH111/CLI-Cmdline.pm',
             },
-            bugtracker => { web => 'https://github.com/HansH111/CLI-Cmdline.pm/issues' },
+            bugtracker => { web => 'https://codeberg.org/HansH111/CLI-Cmdline.pm/issues' },
         },
         provides => {
             'CLI::Cmdline' => {
                 file    => 'lib/CLI/Cmdline.pm',
-                version => '1.26',
+                version => '1.27',
             },
         },
         x_contributors => [
