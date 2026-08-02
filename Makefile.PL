@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME             => 'CLI::Cmdline',
-    AUTHOR           => 'Hans Harder <hans@atbas.org>',
+    AUTHOR           => 'Hans Harder <hans at atbas.org>',
     VERSION_FROM     => 'lib/CLI/Cmdline.pm',
     ABSTRACT         => 'A minimal command-line parser with short and long options in pure Perl',
     LICENSE          => 'perl',
@@ -34,16 +34,15 @@ WriteMakefile(
         provides => {
             'CLI::Cmdline' => {
                 file    => 'lib/CLI/Cmdline.pm',
-                version => '1.24',
+                version => '1.26',
             },
         },
         x_contributors => [
-            'Hans Harder <hans@atbas.org>',
+            'Hans Harder <hans at atbas.org>',
         ],
     },
 
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz' },
     clean => { FILES => 'CLI-Cmdline-*' },
-
-    test => { TESTS => 't/*.t' },
+    test  => { TESTS => 't/*.t' },
 );
