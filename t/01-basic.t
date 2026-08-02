@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+# t/01-basic.t - Test basic functionality
 use strict;
 use warnings;
 use Test::More;
