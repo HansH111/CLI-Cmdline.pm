@@ -1,5 +1,14 @@
 Revision history for Perl module CLI::Cmdline
 
+1.26  2026-08-02
+    - change t/05-integration.t to use $^x instead of fixed path for perl
+    - changed examples and lib files to use as hashbang #!/usr/bin/env perl
+ 
+1.25  2026-01-20
+    - make license term consistent
+    - change MANIFEST to include only needed files
+    - made seperate README file
+
 1.24  2026-01-17
     - Added Test::NoWarnings to all test files for warning detection
     - Created xt/release/pod-coverage.t for POD coverage testing
