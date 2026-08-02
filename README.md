@@ -2,7 +2,7 @@
 A minimal, zero-dependency command-line parser in pure Perl – supporting both short and long options.
 
 [![Perl](https://img.shields.io/badge/perl-5.010%2B-brightgreen)](https://www.perl.org/)
-[![CPAN version](https://img.shields.io/badge/CPAN-1.24-blue)](https://metacpan.org/pod/CLI::Cmdline/)
+[![CPAN version](https://img.shields.io/badge/CPAN-1.26-blue)](https://metacpan.org/pod/CLI::Cmdline/)
 [![License](https://img.shields.io/badge/license-Perl-orange)](https://dev.perl.org/licenses/)
  
 ## Features
@@ -34,7 +34,7 @@ All this in ~120 lines of pure Perl. No dependencies.
 
 ## Usage
 
-    #!/usr/bin/perl
+    #!/usr/bin/env perl
     use strict;
     use warnings;
     use CLI::Cmdline qw(parse);
@@ -143,19 +143,15 @@ Returns 1 on success, 0 on error.
 
 The distribution includes a comprehensive test suite:
 
-    t/01-basic.t        # 163 tests covering basic features
-    t/02-alias.t        #  28 tests covering aliases
-    t/03-complex.t      #  29 tests covering edge cases
-    t/04-error.t        #  28 tests covering errors
-    t/05-integration.t  #  25 tests covering script cases
+    t/01-basic.t        # tests covering basic features
+    t/02-alias.t        # tests covering aliases
+    t/03-complex.t      # tests covering edge cases
+    t/04-error.t        # tests covering errors
+    t/05-integration.t  # tests covering script cases
 
 Run with:
 
     prove -v t/*.t
-
-Author/release tests (requires AUTHOR_TESTING=1 or RELEASE_TESTING=1):
-
-    AUTHOR_TESTING=1 prove -v xt/release/*.t
 
 ## License
 
