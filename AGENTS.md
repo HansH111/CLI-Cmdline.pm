@@ -24,8 +24,14 @@ prove -v t/02-alias.t
 # Run all .t files in t/ directory
 prove -v t/*.t
 
+# generate the META.<json|yml> files
+make distmeta
+
 # Install the module
 make install
+
+# make distribution file
+make dist
 
 # Clean build artifacts
 make clean
@@ -42,7 +48,6 @@ make clean
   - `t/03-complex.t` - 28 tests for edge cases
   - `t/04-error.t` - 27 tests for error handling
   - `t/05-integration.t` - 24 tests for script integration
-  - `xt/release/kwalitee.t` - CPAN kwalitee tests
 
 ## Code Style Guidelines
 
@@ -63,7 +68,7 @@ use 5.010;
 use Exporter 'import';
 
 our @EXPORT_OK = qw(parse);
-our $VERSION   = '1.23';
+our $VERSION   = '1.26';
 
 # Pod documentation starts after version
 # Main code functions after __END__
