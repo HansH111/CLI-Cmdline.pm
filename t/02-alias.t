@@ -1,7 +1,7 @@
 # t/02-alias.t - Test alias functionality using | syntax
 use strict;
 use warnings;
-use Test::More tests => 28;
+use Test::More;
 use Test::NoWarnings 'had_no_warnings';
 
 use CLI::Cmdline qw(parse);

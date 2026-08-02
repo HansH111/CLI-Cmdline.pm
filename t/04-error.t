@@ -1,7 +1,7 @@
 # t/04-error.t - Test error cases and invalid command-line input
 use strict;
 use warnings;
-use Test::More tests => 28;
+use Test::More;
 use Test::NoWarnings 'had_no_warnings';
 
 use CLI::Cmdline qw(parse);

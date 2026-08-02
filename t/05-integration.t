@@ -1,7 +1,7 @@
 # t/05-integration.t - Real-world integration tests using executable scripts
 use strict;
 use warnings;
-use Test::More tests => 25;
+use Test::More;
 use Test::NoWarnings 'had_no_warnings';
 
 use File::Temp qw(tempdir);

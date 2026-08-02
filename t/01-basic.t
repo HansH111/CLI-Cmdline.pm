@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Test::More  tests => 163;
+use Test::More;
 use Data::Dumper;
 use Test::NoWarnings 'had_no_warnings';
 

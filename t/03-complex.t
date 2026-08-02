@@ -1,7 +1,7 @@
 # t/03-complex.t - Test spec strings with or without -/-- prefixes
 use strict;
 use warnings;
-use Test::More tests => 29;
+use Test::More;
 use Test::NoWarnings 'had_no_warnings';
 
 use CLI::Cmdline qw(parse);

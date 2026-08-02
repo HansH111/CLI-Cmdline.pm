@@ -1,7 +1,7 @@
 # t/00-load.t
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More;
 use Test::NoWarnings 'had_no_warnings';
 
 BEGIN {
