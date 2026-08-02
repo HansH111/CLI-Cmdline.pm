@@ -24,8 +24,9 @@ prove -v t/02-alias.t
 # Run all .t files in t/ directory
 prove -v t/*.t
 
-# generate the META.<json|yml> files
-make distmeta
+# generate the META.<json|yml> files, alias should always be declared
+# alias perlmeta='make distmeta && cp *-*/META.* . && echo "META files copied"'
+perlmeta
 
 # Install the module
 make install
