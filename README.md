@@ -1,6 +1,8 @@
 # CLI::Cmdline
 A minimal, zero-dependency command-line parser in pure Perl – supporting both short and long options.
 
+Repo moved to: https://codeberg.org/HansH111/CLI-Cmdline.pm
+
 [![Perl](https://img.shields.io/badge/perl-5.010%2B-brightgreen)](https://www.perl.org/)
 [![CPAN version](https://img.shields.io/badge/CPAN-1.26-blue)](https://metacpan.org/pod/CLI::Cmdline/)
 [![License](https://img.shields.io/badge/license-Perl-orange)](https://dev.perl.org/licenses/)
